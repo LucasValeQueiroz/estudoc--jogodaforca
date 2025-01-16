@@ -87,32 +87,33 @@ vector<string> le_arquivo(){
     ifstream arquivo;
     arquivo.open("palavra.txt");
 
-    if (!arquivo){
-        cout << "Arquivo nao encontrado!" << endl;
-    }else {
+   if(arquivo.is_open()){
         int quantidade_palavras;
         arquivo >> quantidade_palavras;
         
         cout << "O arquivo possui " << quantidade_palavras << " palavras." << endl;
 
         vector<string> palavras_do_arquivo;
-        int escolha;
-        cout << "Quer ver as palavras da forca: "<<endl<<"(1)SIM (2)NAO : " ;
+        char escolha;
+        cout << "Quer ver as palavras da forca? (S/N): " ;
         cin >> escolha;
         for(int i = 0; quantidade_palavras > i; i++){
             string palavra_lida;
             arquivo >> palavra_lida;
-            if (escolha == 1){
+            if (escolha == 'S'){
                 cout <<"Na linha " << i+1 <<" : " << palavra_lida << endl;
             }
-            
+
             
             palavras_do_arquivo.push_back(palavra_lida);
         }
+        arquivo.close();
         return palavras_do_arquivo;
+    }else{
+        cout << "Arquivo nao encontrado!" << endl;
+        exit(0);
     }
-           
-    arquivo.close();
+      
 }
 
 void sorteia_palavra(){
@@ -123,6 +124,32 @@ void sorteia_palavra(){
     palavra_secreta = palavras[indice_sorteado];
 }
 
+void salva_arquivo(vector<string> nova_lista){
+    ofstream arquivo;
+    arquivo.open("palavra.txt");
+    if(arquivo.is_open()){
+        arquivo << nova_lista.size() << endl;
+        for(string palavra : nova_lista) {
+            arquivo << palavra << endl;
+        }
+
+        arquivo.close();
+    }else{
+        cout << "Erro ao abrir arquivo!" << endl;
+        exit(0);
+    }
+}
+
+void adiciona_palavra(){
+    string palavra;
+    cout << "Digite a palavra que deseja adicionar usando letras maiusculas: ";
+    cin >> palavra;
+
+    vector<string> lista_palavras = le_arquivo();
+    lista_palavras.push_back(palavra);
+
+    salva_arquivo(lista_palavras);
+}
 int main () {
     imprime_cabecalho();
 
@@ -142,5 +169,13 @@ int main () {
         cout << "Voce perdeu!" << endl;
     } else{
         cout << "Parabens! Voce acertou a palavra." << endl;
+        
+        
+        cout<< "Voce deseja adicionar uma nova palavra ao banco? (S/N)";
+        char resposta;
+        cin >> resposta;
+        if(resposta == 'S'){
+            adiciona_palavra();
+        }
     }
 }   
